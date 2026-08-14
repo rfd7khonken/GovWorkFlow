@@ -201,7 +201,7 @@
 
     <script>
         // วาง Web App URL ที่สแกนได้จาก Apps Script ที่นี่
-        const GOOGLE_SCRIPT_URL = "วาง_WEB_APP_URL_ตรงนี้";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJpXcEhkSgOytL1--M3RWN4vEva9sL1uRiFKqQjunPSbi7MN88jfWC_EdvGfkLFHxPog/exec"; //วาง_WEB_APP_URL_ตรงนี้
 
         document.addEventListener("DOMContentLoaded", loadTableData);
 
@@ -215,7 +215,7 @@
 
         // ดึงข้อมูลทั้งหมดจาก Apps Script มาสร้างตาราง
         function loadTableData() {
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTvfkHRlRgf780TErhZIU5LJ2cuIpP7uJi4ATEG_J3s8Tw6bVdfe9MwwFNc9wMiZ_Ff_0pisZxlGNCrhdB5NHhQdh6NS-IoRB9D8ZSzcj1AtM8tP01lQVufcNDiyPgDoGtgts5ELSHl_z6vbL3zjQR5s6zOgIKtIutvWBrYdd_kDqGA067A69en0kbtYksxVwWkYDvYcpEARsWmlXh78JDUef2IsMPa-PDzjSzKFbY5uJ7d_X2cddzrJHMxeH5RBj1nVEL-JZ0c78uYuLvVzrh5aR5PBA&lib=M5GSE1Rd4rYlMzSUAOqCex4RUJ1ngcKMK")) {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("วาง_WEB_APP_URL")) {
                 renderTableRows([]);
                 return;
             }
@@ -349,5 +349,13 @@
             return text.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
     </script>
+    <!-- Footer ท้ายเว็บ -->
+    <footer class="footer-custom text-center py-3 mt-5">
+        <div class="container">
+            <small class="text-muted">
+                ส่วนอำนวยการ @ฝ่ายแผนงาน ติดตาม และประเมินผล @สำนักจัดการทรัพยากรป่าไม้ที่ 7 (ขอนแก่น) V. 1.0
+            </small>
+        </div>
+    </footer>
 </body>
 </html>
