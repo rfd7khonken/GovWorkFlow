@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ระบบสารบรรณและคำสั่งภาครัฐ</title>
 
-    <!-- Google Fonts & Libraries -->
+    <!-- Google Fonts & CDN Libraries -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -80,18 +80,27 @@
             background-color: var(--secondary-blue);
             color: white;
         }
+        .badge-category {
+            background-color: #eef2f7;
+            color: #1f4e89;
+            font-size: 0.82rem;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            border: 1px solid #d0dbe7;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Navbar -->
+    <!-- Header Navbar -->
     <nav class="navbar navbar-dark navbar-custom">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4" href="#">
                 <i class="fa-solid fa-file-contract text-warning me-2"></i> ระบบค้นหาและบันทึกคำสั่ง
             </a>
             <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-                <i class="fa-solid fa-database me-1"></i> Google Sheets Connected
+                <i class="fa-solid fa-database me-1"></i> Multi-Sheets Connected
             </span>
         </div>
     </nav>
@@ -111,13 +120,13 @@
             </li>
         </ul>
 
-        <!-- TAB 1: แสดงตารางข้อมูล -->
+        <!-- TAB 1: ตารางแสดงข้อมูล -->
         <div id="tab-list" class="tab-content-item">
             <div class="custom-card">
                 <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-2">
                     <h5 class="m-0 fw-bold text-navy"><i class="fa-solid fa-folder-open text-primary me-2"></i>รายการคำสั่ง</h5>
                     <div class="d-flex gap-2">
-                        <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 220px;" placeholder="ค้นหาเลขคำสั่ง/เรื่อง..." onkeyup="filterTable()">
+                        <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 250px;" placeholder="ค้นหาประเภท/เลขคำสั่ง/เรื่อง..." onkeyup="filterTable()">
                         <button class="btn btn-sm btn-outline-secondary" onclick="loadTableData()"><i class="fa-solid fa-rotate"></i></button>
                     </div>
                 </div>
@@ -125,10 +134,11 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 20%;">คำสั่งที่</th>
-                                <th style="width: 15%;">ลงวันที่</th>
-                                <th style="width: 50%;">เรื่อง</th>
-                                <th style="width: 15%; text-align: center;">ดาวน์โหลด</th>
+                                <th style="width: 15%;">ประเภทบุคลากร</th>
+                                <th style="width: 15%;">คำสั่งที่</th>
+                                <th style="width: 18%;">ลงวันที่</th>
+                                <th style="width: 38%;">เรื่อง</th>
+                                <th style="width: 14%; text-align: center;">ดาวน์โหลด</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody"></tbody>
@@ -149,20 +159,27 @@
                             <form id="orderForm" onsubmit="handleFormSubmit(event)">
                                 <div class="row g-3">
                                     <div class="col-md-6">
+                                        <label class="form-label fw-bold">เลือกบันทึกลงชีต *</label>
+                                        <select class="form-select" id="selectCategory" required>
+                                            <option value="ข้าราชการ">ข้าราชการ</option>
+                                            <option value="พนักงานราชการ" selected>พนักงานราชการ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">คำสั่งที่ *</label>
-                                        <input type="text" class="form-control" id="inputOrderNo" placeholder="เช่น 1024/2569" required>
+                                        <input type="text" class="form-control" id="inputOrderNo" placeholder="เช่น 3397/2568" required>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="form-label fw-bold">ลงวันที่ *</label>
                                         <input type="date" class="form-control" id="inputDate" required>
                                     </div>
-                                    <div class="col-12">
-                                        <label class="form-label fw-bold">เรื่อง *</label>
-                                        <textarea class="form-control" id="inputSubject" rows="3" placeholder="กรอกรายละเอียดเรื่อง..." required></textarea>
-                                    </div>
-                                    <div class="col-12">
+                                    <div class="col-md-6">
                                         <label class="form-label fw-bold">ลิงก์ดาวน์โหลด (URL) *</label>
                                         <input type="url" class="form-control" id="inputDownload" placeholder="https://drive.google.com/file/d/..." required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-bold">เรื่อง *</label>
+                                        <textarea class="form-control" id="inputSubject" rows="3" placeholder="เช่น ให้พนักงานราชการไปปฏิบัติงาน" required></textarea>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
@@ -183,11 +200,12 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        // นำ URL ที่ได้จาก Google Apps Script ใน Step 2 มาวางตรงนี้
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFbZCTN5NnmCjP97G3CiXmFIhPbGwGw95zd4ZAwS15w8as9Na4uoHSrjRBZ2aQV33fyA/exec";  //วาง_WEB_APP_URL_ตรงนี้ 
+        // วาง Web App URL ที่สแกนได้จาก Apps Script ที่นี่
+        const GOOGLE_SCRIPT_URL = "วาง_WEB_APP_URL_ตรงนี้";
 
         document.addEventListener("DOMContentLoaded", loadTableData);
 
+        // สลับหน้าจอระหว่าง Tab ตาราง และ Tab ฟอร์ม
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content-item').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.nav-pills .nav-link').forEach(el => el.classList.remove('active'));
@@ -195,8 +213,9 @@
             document.getElementById('btn-' + tabId).classList.add('active');
         }
 
+        // ดึงข้อมูลทั้งหมดจาก Apps Script มาสร้างตาราง
         function loadTableData() {
-            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("วาง_WEB_APP_URL")) {
+            if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTvfkHRlRgf780TErhZIU5LJ2cuIpP7uJi4ATEG_J3s8Tw6bVdfe9MwwFNc9wMiZ_Ff_0pisZxlGNCrhdB5NHhQdh6NS-IoRB9D8ZSzcj1AtM8tP01lQVufcNDiyPgDoGtgts5ELSHl_z6vbL3zjQR5s6zOgIKtIutvWBrYdd_kDqGA067A69en0kbtYksxVwWkYDvYcpEARsWmlXh78JDUef2IsMPa-PDzjSzKFbY5uJ7d_X2cddzrJHMxeH5RBj1nVEL-JZ0c78uYuLvVzrh5aR5PBA&lib=M5GSE1Rd4rYlMzSUAOqCex4RUJ1ngcKMK")) {
                 renderTableRows([]);
                 return;
             }
@@ -219,20 +238,22 @@
                 });
         }
 
+        // วาดแถวข้อมูลลงในตาราง HTML
         function renderTableRows(data) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
             if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-muted">ยังไม่มีข้อมูลคำสั่งในระบบ</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center py-4 text-muted">ยังไม่มีข้อมูลคำสั่งในระบบ</td></tr>`;
                 return;
             }
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
+                    <td><span class="badge-category">${escapeHtml(row.category)}</span></td>
                     <td class="fw-bold text-primary">${escapeHtml(row.orderNo)}</td>
-                    <td>${formatThaiDate(row.date)}</td>
+                    <td>${escapeHtml(row.displayDate)}</td>
                     <td>${escapeHtml(row.subject)}</td>
                     <td class="text-center">
                         <a href="${escapeHtml(row.downloadUrl)}" target="_blank" class="btn-download">
@@ -244,19 +265,24 @@
             });
         }
 
+        // บันทึกข้อมูลเมื่อกดปุ่ม Submit ฟอร์ม
         function handleFormSubmit(e) {
             e.preventDefault();
 
+            const rawDate = document.getElementById('inputDate').value;
+            const thaiDateText = convertToThaiDateString(rawDate); // แปลง YYYY-MM-DD เป็น "23 กันยายน 2568"
+
             const formData = {
+                category: document.getElementById('selectCategory').value,
                 orderNo: document.getElementById('inputOrderNo').value.trim(),
-                date: document.getElementById('inputDate').value,
+                date: thaiDateText,
                 subject: document.getElementById('inputSubject').value.trim(),
                 downloadUrl: document.getElementById('inputDownload').value.trim()
             };
 
             Swal.fire({
                 title: 'ยืนยันการบันทึกข้อมูล?',
-                text: `คำสั่งที่: ${formData.orderNo}`,
+                html: `<b>บันทึกลงชีต:</b> ${formData.category}<br><b>คำสั่งที่:</b> ${formData.orderNo}<br><b>วันที่:</b> ${formData.date}`,
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#1f4e89',
@@ -277,7 +303,7 @@
                         body: JSON.stringify(formData)
                     })
                     .then(() => {
-                        Swal.fire('บันทึกสำเร็จ!', 'เพิ่มข้อมูลลงใน Google Sheet เรียบร้อยแล้ว', 'success');
+                        Swal.fire('บันทึกสำเร็จ!', `เพิ่มข้อมูลลงในชีต "${formData.category}" เรียบร้อยแล้ว`, 'success');
                         document.getElementById('orderForm').reset();
                         loadTableData();
                         switchTab('tab-list');
@@ -289,6 +315,7 @@
             });
         }
 
+        // ฟังก์ชันค้นหาข้อมูลสดในตาราง
         function filterTable() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             const rows = document.querySelectorAll('#tableBody tr');
@@ -297,15 +324,26 @@
             });
         }
 
-        function formatThaiDate(dateStr) {
-            if (!dateStr) return "-";
+        // แปลงฟอร์แมต YYYY-MM-DD เป็นข้อความวันที่ภาษาไทยแบบเต็ม
+        function convertToThaiDateString(dateStr) {
+            if (!dateStr) return "";
             const parts = dateStr.split('-');
             if (parts.length !== 3) return dateStr;
-            const year = parseInt(parts[0]) + 543;
-            const months = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
-            return `${parseInt(parts[2])} ${months[parseInt(parts[1]) - 1]} ${year}`;
+            
+            const day = parseInt(parts[2], 10);
+            const monthIndex = parseInt(parts[1], 10) - 1;
+            const yearBE = parseInt(parts[0], 10) + 543;
+            
+            const thaiMonthsFull = [
+                "มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน",
+                "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม",
+                "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"
+            ];
+            
+            return `${day} ${thaiMonthsFull[monthIndex]} ${yearBE}`;
         }
 
+        // ป้องกัน XSS Security
         function escapeHtml(text) {
             if (!text) return "";
             return text.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
