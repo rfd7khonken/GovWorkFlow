@@ -266,20 +266,48 @@
         }
 
         // บันทึกข้อมูลเมื่อกดปุ่ม Submit ฟอร์ม
-        function handleFormSubmit(e) {
-            e.preventDefault();
+        // กำหนดรหัสผ่านสำหรับการเพิ่มข้อมูล (สามารถเปลี่ยนรหัสตรงนี้ได้)
+const ADMIN_PIN = "123456"; 
 
-            const rawDate = document.getElementById('inputDate').value;
-            const thaiDateText = convertToThaiDateString(rawDate); // แปลง YYYY-MM-DD เป็น "23 กันยายน 2568"
+function handleFormSubmit(e) {
+    e.preventDefault();
 
-            const formData = {
-                category: document.getElementById('selectCategory').value,
-                orderNo: document.getElementById('inputOrderNo').value.trim(),
-                date: thaiDateText,
-                subject: document.getElementById('inputSubject').value.trim(),
-                downloadUrl: document.getElementById('inputDownload').value.trim()
-            };
+    const rawDate = document.getElementById('inputDate').value;
+    const thaiDateText = convertToThaiDateString(rawDate);
 
+    const formData = {
+        category: document.getElementById('selectCategory').value,
+        orderNo: document.getElementById('inputOrderNo').value.trim(),
+        date: thaiDateText,
+        subject: document.getElementById('inputSubject').value.trim(),
+        downloadUrl: document.getElementById('inputDownload').value.trim()
+    };
+
+    // ขั้นตอนที่ 1: ให้กรอกรหัสผ่านก่อน
+    Swal.fire({
+        title: 'กรุณากรอกรหัสผ่านเจ้าหน้าที่',
+        text: 'เฉพาะผู้ได้รับอนุญาตเท่านั้นที่สามารถเพิ่มคำสั่งได้',
+        input: 'password',
+        inputPlaceholder: 'ใส่รหัสผ่านที่นี่...',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonColor: '#1f4e89',
+        confirmButtonText: 'ยืนยันรหัสผ่าน',
+        cancelButtonText: 'ยกเลิก',
+        inputValidator: (value) => {
+            if (!value) {
+                return 'กรุณากรอกรหัสผ่านก่อน!';
+            }
+            if (value !== ADMIN_PIN) {
+                return 'รหัสผ่านไม่ถูกต้อง!';
+            }
+        }
+    }).then((pinResult) => {
+        // หากกรอกรหัสผ่านถูกต้อง ให้แสดงปุ่มยืนยันการบันทึก
+        if (pinResult.isConfirmed) {
             Swal.fire({
                 title: 'ยืนยันการบันทึกข้อมูล?',
                 html: `<b>บันทึกลงชีต:</b> ${formData.category}<br><b>คำสั่งที่:</b> ${formData.orderNo}<br><b>วันที่:</b> ${formData.date}`,
@@ -288,8 +316,8 @@
                 confirmButtonColor: '#1f4e89',
                 confirmButtonText: 'บันทึก',
                 cancelButtonText: 'ยกเลิก'
-            }).then(result => {
-                if (result.isConfirmed) {
+            }).then((saveResult) => {
+                if (saveResult.isConfirmed) {
                     Swal.fire({
                         title: 'กำลังบันทึกข้อมูล...',
                         allowOutsideClick: false,
@@ -314,6 +342,8 @@
                 }
             });
         }
+    });
+}
 
         // ฟังก์ชันค้นหาข้อมูลสดในตาราง
         function filterTable() {
