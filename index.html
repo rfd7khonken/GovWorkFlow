@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบสารบรรณและคำสั่งภาครัฐ</title>
+    <title>ระบบสารบรรณและคำสั่ง</title>
 
     <!-- Google Fonts & CDN Libraries -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,7 +100,7 @@
                 <i class="fa-solid fa-file-contract text-warning me-2"></i> ระบบค้นหาและบันทึกคำสั่ง
             </a>
             <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-                <i class="fa-solid fa-database me-1"></i> Multi-Sheets Connected
+                <i class="fa-solid fa-database me-1"></i> Multi-Sheets Connected :สำนักจัดการทรัพยากรป่าไม้ที่ 7 (ขอนแก่น)
             </span>
         </div>
     </nav>
@@ -114,7 +114,7 @@
                 </button>
             </li>
             <li class="nav-item">
-                <button class="nav-link" id="btn-tab-form" onclick="switchTab('tab-form')">
+                <button class="nav-link active" id="btn-tab-form" onclick="switchTab('tab-form')">
                     <i class="fa-solid fa-plus-circle me-2"></i>เพิ่มคำสั่งใหม่
                 </button>
             </li>
@@ -134,7 +134,7 @@
                     <table class="table table-hover align-middle">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 15%;">ประเภทบุคลากร</th>
+                                <th style="width: 15%;">ประเภท</th>
                                 <th style="width: 15%;">คำสั่งที่</th>
                                 <th style="width: 18%;">ลงวันที่</th>
                                 <th style="width: 38%;">เรื่อง</th>
@@ -179,7 +179,7 @@
                                     </div>
                                     <div class="col-12">
                                         <label class="form-label fw-bold">เรื่อง *</label>
-                                        <textarea class="form-control" id="inputSubject" rows="3" placeholder="เช่น ให้พนักงานราชการไปปฏิบัติงาน" required></textarea>
+                                        <textarea class="form-control" id="inputSubject" rows="3" placeholder="ตัวอย่าง ให้ข้าราชการและลูกจ้างประจำไปปฏิบัติราชการ" required></textarea>
                                     </div>
                                 </div>
                                 <div class="d-flex justify-content-end gap-2 mt-4">
